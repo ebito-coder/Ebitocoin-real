@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#06100b">
+<title>EBiTO Coin — Advanced</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{box-sizing:border-box}
+:root{--bg:#06100b;--panel:#0c1b13;--panel2:#10251a;--line:#1e3c2b;--green:#63ff9b;--text:#fff;--muted:#82978a;--gold:#ffd45a;--blue:#5b9cff}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
+body{overflow-x:hidden}
+button{font:inherit;border:0;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.app{width:100%;max-width:520px;margin:auto;min-height:100vh;padding-bottom:88px}
+header{display:flex;align-items:center;justify-content:space-between;padding:16px}
+.logo{font-weight:1000;font-size:24px;color:var(--green)}
+.logo span{color:#fff}
+.user{background:#10251a;border:1px solid var(--line);padding:8px 11px;border-radius:18px;font-size:12px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.page{display:none;padding:8px 15px 20px}.page.active{display:block}
+.hero{padding:22px 16px;border-radius:25px;text-align:center;background:radial-gradient(circle at 50% 0,#1b633a,#0c2819 48%,#08140d);border:1px solid #286340;box-shadow:0 15px 45px #0008}
+.label{font-size:11px;color:#9bb2a2;font-weight:800;letter-spacing:1px}
+.balance{font-size:43px;font-weight:1000;margin:7px 0}.balance small{font-size:18px;color:var(--green)}
+.sub{font-size:12px;color:#a5b7aa}
+.coin-wrap{padding:25px 0 10px;text-align:center}
+.coin{width:190px;height:190px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 25%,#e4ffeb,#82ffad 28%,#32c96c 58%,#086d30);color:#052111;font-size:31px;font-weight:1000;box-shadow:0 0 0 10px #63ff9b0c,0 0 60px #4cff9260;transition:.08s;touch-action:manipulation;user-select:none}
+.coin:active{transform:scale(.93)}
+.energy{font-size:13px;color:#a5b7aa;margin:14px 0 7px}.bar{height:8px;background:#17291e;border-radius:20px;overflow:hidden}.bar i{display:block;height:100%;width:100%;background:var(--green);border-radius:20px;transition:.2s}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.stat,.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}
+.stat b{display:block;font-size:17px;margin-top:4px}.muted{font-size:11px;color:var(--muted)}
+.title{font-size:18px;font-weight:950;margin:21px 0 11px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btn{min-height:42px;padding:9px 14px;border-radius:13px;background:var(--green);color:#052111;font-weight:900}.btn.dark{background:#173124;color:#fff}.btn.blue{background:var(--blue);color:#fff}.btn.gold{background:var(--gold);color:#171100}
+.item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #193124}.item:last-child{border-bottom:0}
+.icon{width:46px;height:46px;flex:none;border-radius:14px;background:#173625;display:flex;align-items:center;justify-content:center;font-size:21px}
+.info{flex:1}.name{font-weight:850;font-size:14px}.reward{color:var(--green);font-size:11px;margin-top:4px}
+.tabs{display:flex;gap:7px;overflow:auto;margin:5px 0 12px}.tab{padding:9px 13px;border-radius:20px;background:#102319;color:#82978a;white-space:nowrap}.tab.active{background:#1c4b31;color:var(--green)}
+.level{height:9px;background:#17291e;border-radius:20px;overflow:hidden;margin:8px 0}.level i{display:block;height:100%;background:var(--green)}
+.avatar{width:82px;height:82px;margin:8px auto 12px;border-radius:50%;background:#173625;display:flex;align-items:center;justify-content:center;font-size:36px}
+.center{text-align:center}
+.nav{position:fixed;z-index:50;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:520px;display:flex;background:#08130d;border-top:1px solid var(--line);padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+.nav button{flex:1;background:none;color:#718579;font-size:10px}.nav button.active{color:var(--green)}.nav span{display:block;font-size:20px;margin-bottom:3px}
+.toast{position:fixed;z-index:100;left:50%;bottom:92px;transform:translate(-50%,20px);background:#173625;border:1px solid #2a563d;border-radius:13px;padding:12px 17px;font-size:13px;opacity:0;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal{position:fixed;z-index:90;inset:0;background:#0009;display:none;align-items:flex-end}.modal.show{display:flex}.sheet{width:100%;max-width:520px;margin:auto;background:#0b1911;border:1px solid var(--line);border-radius:24px 24px 0 0;padding:20px}
+input{width:100%;background:#07110b;color:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;outline:none}
+.badge{display:inline-block;padding:5px 8px;border-radius:10px;background:#173625;color:var(--green);font-size:10px;font-weight:800}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">EBiTO<span> Coin</span></div><div class="user" id="userName">Guest</div></header>
+
+<section class="page active" id="home">
+<div class="hero">
+<div class="label">TOTAL EBT BALANCE</div>
+<div class="balance"><span id="balance">0</span> <small>EBT</small></div>
+<div class="sub">⚡ <b id="rate">1</b> EBT per tap • Level <b id="level">1</b></div>
+</div>
+<div class="coin-wrap">
+<div class="coin" id="coin">EBT</div>
+<div class="energy">⚡ Energy <b id="energy">500</b>/<span id="maxEnergy">500</span></div>
+<div class="bar"><i id="energyBar"></i></div>
+</div>
+<div class="grid">
+<div class="stat"><span class="muted">🔥 Streak</span><b id="streak">0 days</b></div>
+<div class="stat"><span class="muted">🏆 Rank</span><b id="rank">#—</b></div>
+<div class="stat"><span class="muted">👥 Referrals</span><b id="friends">0</b></div>
+<div class="stat"><span class="muted">💎 Earned</span><b id="earned">0</b></div>
+</div>
+<div class="title">Boosters</div>
+<div class="card">
+<div class="item">
+<div class="icon">⚡</div><div class="info"><div class="name">Tap Power</div><div class="muted">Increase EBT earned per tap</div><div class="reward">Level <b id="tapLevel">1</b></div></div>
+<button class="btn" id="upgrade">100 EBT</button>
+</div>
+<div class="item">
+<div class="icon">🔋</div><div class="info"><div class="name">Energy Tank</div><div class="muted">Increase your maximum energy</div><div class="reward">Max <b id="tankLevel">500</b></div></div>
+<button class="btn dark" id="tankUpgrade">500 EBT</button>
+</div>
+</div>
+</section>
+
+<section class="page" id="tasks">
+<div class="title">Earn EBT</div>
+<div class="tabs"><button class="tab active">All Tasks</button><button class="tab">Daily</button><button class="tab">Social</button></div>
+<div class="card" id="taskList"></div>
+</section>
+
+<section class="page" id="friends">
+<div class="title">Referral Center</div>
+<div class="hero"><div class="label">INVITE & EARN</div><div class="balance">+1,000 <small>EBT</small></div><div class="sub">for every eligible friend</div></div>
+<div class="card" style="margin-top:12px">
+<div class="label">YOUR REFERRAL LINK</div>
+<p id="refLink" style="word-break:break-all;font-size:12px">Loading...</p>
+<button class="btn" style="width:100%" id="copyRef">Copy Link</button>
+</div>
+<div class="grid">
+<div class="stat"><span class="muted">Friends</span><b id="friendCount2">0</b></div>
+<div class="stat"><span class="muted">Referral EBT</span><b id="refEarn">0</b></div>
+</div>
+</section>
+
+<section class="page" id="leaderboard">
+<div class="title">Leaderboard</div>
+<div class="card" id="leaders"></div>
+<p class="muted center">Demo leaderboard for the frontend prototype.</p>
+</section>
+
+<section class="page" id="profile">
+<div class="title">Profile</div>
+<div class="card center"><div class="avatar">👤</div><h2 id="profileName">Guest</h2><p class="muted" id="profileUsername">Telegram user</p><span class="badge">EBiTO Member</span></div>
+<div class="title">Statistics</div>
+<div class="card">
+<div class="item"><span>Total Balance</span><b id="pBalance">0 EBT</b></div>
+<div class="item"><span>Total Earned</span><b id="pEarned">0 EBT</b></div>
+<div class="item"><span>Tap Level</span><b id="pLevel">1</b></div>
+<div class="item"><span>Best Streak</span><b id="bestStreak">0 days</b></div>
+</div>
+<div class="title">Settings</div>
+<div class="card"><button class="btn dark" style="width:100%" id="reset">Reset local progress</button></div>
+</section>
+
+<nav class="nav">
+<button class="active" data-page="home"><span>🏠</span>Home</button>
+<button data-page="tasks"><span>🎯</span>Earn</button>
+<button data-page="friends"><span>👥</span>Friends</button>
+<button data-page="leaderboard"><span>🏆</span>Rank</button>
+<button data-page="profile"><span>👤</span>Profile</button>
+</nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+const tg=window.Telegram&&window.Telegram.WebApp?window.Telegram.WebApp:null;
+if(tg){try{tg.ready();tg.expand();}catch(e){}}
+
+const KEY="ebitoCoinAdvancedV1";
+const defaults={balance:0,energy:500,maxEnergy:500,tapLevel:1,tankLevel:1,totalEarned:0,friends:0,refEarned:0,streak:0,bestStreak:0,lastDay:"",claimed:{},dailyClaim:""};
+let data;
+try{data=JSON.parse(localStorage.getItem(KEY))||structuredClone(defaults)}catch(e){data={...defaults,claimed:{}}}
+for(const k in defaults)if(data[k]===undefined)data[k]=defaults[k];
+if(!data.claimed)data.claimed={};
+
+const tasks=[
+{id:"daily",icon:"🎁",name:"Daily check-in",desc:"Claim your daily reward",reward:250,type:"daily"},
+{id:"youtube",icon:"▶️",name:"Subscribe to YouTube",desc:"Support the EBiTO channel",reward:500,type:"social"},
+{id:"tiktok",icon:"🎵",name:"Follow on TikTok",desc:"Follow the official account",reward:300,type:"social"},
+{id:"video",icon:"🎬",name:"Watch a video",desc:"Complete today's video task",reward:200,type:"daily"},
+{id:"invite",icon:"👥",name:"Invite a friend",desc:"Share your referral link",reward:1000,type:"social"}
+];
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+function fmt(n){return Math.floor(Number(n)||0).toLocaleString()}
+function today(){return new Date().toISOString().slice(0,10)}
+function toast(s){const t=document.getElementById("toast");t.textContent=s;t.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove("show"),1800)}
+
+let user=null;
+if(tg?.initDataUnsafe?.user)user=tg.initDataUnsafe.user;
+const display=user?[user.first_name,user.last_name].filter(Boolean).join(" ")||"Telegram User":"Guest";
+const uname=user?.username?"@"+user.username:"Telegram user";
+document.getElementById("userName").textContent=display;
+document.getElementById("profileName").textContent=display;
+document.getElementById("profileUsername").textContent=uname;
+
+function upgradeCost(){return Math.floor(100*Math.pow(2,data.tapLevel-1))}
+function tankCost(){return Math.floor(500*Math.pow(2,data.tankLevel-1))}
+
+function update(){
+document.getElementById("balance").textContent=fmt(data.balance);
+document.getElementById("energy").textContent=fmt(data.energy);
+document.getElementById("maxEnergy").textContent=fmt(data.maxEnergy);
+document.getElementById("rate").textContent=data.tapLevel;
+document.getElementById("level").textContent=data.tapLevel;
+document.getElementById("tapLevel").textContent=data.tapLevel;
+document.getElementById("tankLevel").textContent=data.maxEnergy;
+document.getElementById("upgrade").textContent=fmt(upgradeCost())+" EBT";
+document.getElementById("tankUpgrade").textContent=fmt(tankCost())+" EBT";
+document.getElementById("energyBar").style.width=Math.max(0,Math.min(100,data.energy/data.maxEnergy*100))+"%";
+document.getElementById("streak").textContent=data.streak+" day"+(data.streak===1?"":"s");
+document.getElementById("friends").textContent=fmt(data.friends);
+document.getElementById("earned").textContent=fmt(data.totalEarned);
+document.getElementById("friendCount2").textContent=fmt(data.friends);
+document.getElementById("refEarn").textContent=fmt(data.refEarned)+" EBT";
+document.getElementById("pBalance").textContent=fmt(data.balance)+" EBT";
+document.getElementById("pEarned").textContent=fmt(data.totalEarned)+" EBT";
+document.getElementById("pLevel").textContent=data.tapLevel;
+document.getElementById("bestStreak").textContent=data.bestStreak+" days";
+document.getElementById("rank").textContent="#"+(Math.max(1,100000-Math.floor(data.balance/10))).toLocaleString();
+renderTasks();
+renderLeaders();
+}
+
+function addCoins(n){
+data.balance+=n;data.totalEarned+=n;save();update();
+}
+document.getElementById("coin").addEventListener("click",()=>{
+if(data.energy<=0)return toast("⚡ Energy is empty");
+data.balance+=data.tapLevel;data.totalEarned+=data.tapLevel;data.energy--;save();update();
+});
+
+setInterval(()=>{
+if(data.energy<data.maxEnergy){data.energy=Math.min(data.maxEnergy,data.energy+1);save();update()}
+},3000);
+
+document.getElementById("upgrade").onclick=()=>{
+const c=upgradeCost();if(data.balance<c)return toast("Not enough EBT");
+data.balance-=c;data.tapLevel++;save();update();toast("⚡ Tap Power upgraded");
+};
+document.getElementById("tankUpgrade").onclick=()=>{
+const c=tankCost();if(data.balance<c)return toast("Not enough EBT");
+data.balance-=c;data.tankLevel++;data.maxEnergy+=100;data.energy+=100;save();update();toast("🔋 Energy tank upgraded");
+};
+
+function claim(id,reward,type){
+const day=today();
+if(type==="daily"){
+if(data.dailyClaim===day)return toast("Daily reward already claimed");
+data.dailyClaim=day;data.streak++;
+if(data.streak>data.bestStreak)data.bestStreak=data.streak;
+}else{
+if(data.claimed[id])return toast("Task already claimed");
+data.claimed[id]=day;
+}
+addCoins(reward);toast("+"+fmt(reward)+" EBT received!");
+}
+
+function renderTasks(){
+const el=document.getElementById("taskList");el.innerHTML="";
+for(const t of tasks){
+const claimed=t.type==="daily"?data.dailyClaim===today():!!data.claimed[t.id];
+const div=document.createElement("div");div.className="item";
+div.innerHTML='<div class="icon">'+t.icon+'</div><div class="info"><div class="name">'+t.name+'</div><div class="muted">'+t.desc+'</div><div class="reward">+'+fmt(t.reward)+' EBT</div></div>';
+const b=document.createElement("button");b.className="btn";b.textContent=claimed?"Claimed":"Claim";b.disabled=claimed;b.onclick=()=>claim(t.id,t.reward,t.type);
+div.appendChild(b);el.appendChild(div);
+}
+}
+
+function renderLeaders(){
+const names=["Ebito Miner","Green Hunter","EBT Master","Crypto King","Fast Tapper"];
+const values=[980000,765000,642000,521000,430000];
+const el=document.getElementById("leaders");el.innerHTML="";
+for(let i=0;i<5;i++){
+const d=document.createElement("div");d.className="item";
+d.innerHTML='<div class="icon">'+["🥇","🥈","🥉","4️⃣","5️⃣"][i]+'</div><div class="info"><div class="name">'+names[i]+'</div><div class="muted">'+fmt(values[i])+' EBT</div></div>';
+el.appendChild(d);
+}
+}
+
+function referral(){
+const bot="Ebitocoinbot";
+return user?.id?"https://t.me/"+bot+"?start=ref_"+user.id:"Open EBiTO Coin in Telegram to generate your link";
+}
+document.getElementById("refLink").textContent=referral();
+document.getElementById("copyRef").onclick=async()=>{
+try{await navigator.clipboard.writeText(referral());toast("Referral link copied")}catch(e){toast("Copy failed")}
+};
+
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(b.dataset.page).classList.add("active");
+document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));
+b.classList.add("active");scrollTo(0,0);
+});
+
+document.getElementById("reset").onclick=()=>{
+if(confirm("Reset all local EBiTO progress?")){
+localStorage.removeItem(KEY);location.reload();
+}
+};
+
+update();save();
+</script>
+</body>
+</html>
